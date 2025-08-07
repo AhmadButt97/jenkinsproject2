@@ -1,5 +1,5 @@
 # 1. Use the official CentOS base image
-FROM centos:7
+FROM centos
 
 # 2. Add metadata about the image
 LABEL maintainer="Ahmadbutt97@gmail.com"
