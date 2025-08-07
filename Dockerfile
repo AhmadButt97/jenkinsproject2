@@ -1,25 +1,30 @@
 # 1. Use the official CentOS base image
-FROM centos:latest
+FROM centos:7
 
-# 2. Add metadata about the image (e.g., maintainer's contact info)
+# 2. Add metadata about the image
 LABEL maintainer="Ahmadbutt97@gmail.com"
 
-# 3. Install Apache (httpd), zip/unzip utilities, and wget
-RUN yum update -y && \
-    yum install -y httpd unzip wget && \
+# 3. Install Apache (httpd), unzip, wget
+RUN yum clean all && \
+    yum -y update && \
+    yum -y install httpd unzip wget && \
     yum clean all
 
-# 4. Set the working directory where the files will be handled
+# 4. Set working directory
 WORKDIR /var/www/html
 
-# 5. Download the template zip file using wget
-RUN wget -O template.zip https://templatemo.com/tm-zip-files/templatemo_574_mexant.zip
+# 5. Download and unzip the website template
+RUN wget -O template.zip https://templatemo.com/tm-zip-files/templatemo_574_mexant.zip && \
+    unzip template.zip -d templatemo_574_mexant && \
+    cp -rvf templatemo_574_mexant/* . && \
+    rm -rf template.zip templatemo_574_mexant
 
-# 6. Unzip the downloaded template into a subfolder
-RUN unzip template.zip -d templatemo_574_mexant
+# 6. Expose port 80
+EXPOSE 80
 
-# 7. Copy all contents from the unzipped folder to Apache’s root directory
-RUN cp -rvf templatemo_574_mexant/* .
+# 7. Start Apache in the foreground
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+
 
 # 8. Expose port 80 to allow HTTP traffic
 EXPOSE 80
