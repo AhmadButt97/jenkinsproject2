@@ -1,33 +1,20 @@
-# 1. Use the official CentOS base image
-FROM centos
+# Use Ubuntu as the base image
+FROM ubuntu:latest
 
-# 2. Add metadata about the image
-LABEL maintainer="Ahmadbutt97@gmail.com"
+# Metadata
+LABEL maintainer="yourname@example.com"
+LABEL version="1.0"
 
-# 3. Install Apache (httpd), unzip, wget
-RUN yum clean all && \
-    yum -y update && \
-    yum -y install httpd unzip wget && \
-    yum clean all
+# Update packages and install Apache, unzip, wget
+RUN apt-get update && \
+    apt-get install -y apache2 unzip wget && \
+    apt-get clean
 
-# 4. Set working directory
-WORKDIR /var/www/html
+# Copy website files (adjust if needed)
+COPY . /var/www/html/
 
-# 5. Download and unzip the website template
-RUN wget -O template.zip https://templatemo.com/tm-zip-files/templatemo_574_mexant.zip && \
-    unzip template.zip -d templatemo_574_mexant && \
-    cp -rvf templatemo_574_mexant/* . && \
-    rm -rf template.zip templatemo_574_mexant
-
-# 6. Expose port 80
+# Expose Apache's port
 EXPOSE 80
 
-# 7. Start Apache in the foreground
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
-
-
-# 8. Expose port 80 to allow HTTP traffic
-EXPOSE 80
-
-# 9. Start the Apache web server in the foreground
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+# Start Apache in foreground
+CMD ["apachectl", "-D", "FOREGROUND"]
